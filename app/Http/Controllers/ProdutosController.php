@@ -29,7 +29,11 @@ class ProdutosController extends Controller
      */
     public function store(Request $request)
     {
-        $produto = new Produto($request->all());
+        $req = $request->all();
+        $produto = new Produto();
+        $produto->nome = $req['nome'];
+        $produto->valor = $req['valor'];
+        $produto->qtd = $req['qtd'];
         try{
             return \Response::json($produto->save());
         }catch (\Exception $e){
