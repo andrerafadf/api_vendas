@@ -27,13 +27,13 @@ class ProdutosController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store()
     {
-        $req = $request->all();
-        $produto = new Produto();
-        $produto->nome = $req['nome'];
-        $produto->valor = $req['valor'];
-        $produto->qtd = $req['qtd'];
+        $post           = \Request::all();
+        $produto        = new Produto();
+        $produto->nome  = $post['nome'];
+        $produto->valor = $post['valor'];
+        $produto->qtd   = $post['qtd'];
         try{
             return \Response::json($produto->save());
         }catch (\Exception $e){
@@ -66,12 +66,12 @@ class ProdutosController extends Controller
      */
     public function update($id)
     {
-        $request = \Request::all();
+        $post = \Request::all();
 
-        $produto = Produto::find($id);
-        $produto->nome = $request['nome'];
-        $produto->valor = $request['valor'];
-        $produto->qtd = $request['qtd'];
+        $produto        = Produto::find($id);
+        $produto->nome  = $post['nome'];
+        $produto->valor = $post['valor'];
+        $produto->qtd   = $post['qtd'];
 
         try{
             return \Response::json($produto->save());

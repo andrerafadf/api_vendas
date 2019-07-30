@@ -29,9 +29,9 @@ class SituacoesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store()
     {
-        $situacao = new Situacao($request->all());
+        $situacao = new Situacao(\Request::all());
         try{
             return \Response::json($situacao->save());
         }catch (\Exception $e){
@@ -64,10 +64,10 @@ class SituacoesController extends Controller
      */
     public function update($id)
     {
-        $request = \Request::all();
+        $post = \Request::all();
 
         $situacao = Situacao::find($id);
-        $situacao->nome = $request['nome'];
+        $situacao->nome = $post['nome'];
         try{
             return \Response::json($situacao->save());
         }catch (\Exception $e){

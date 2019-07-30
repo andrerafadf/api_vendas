@@ -8,9 +8,6 @@ class Pedido extends Model
 {
     protected $table = 'pedidos';
     protected $fillable = [
-        'produto_id',
-        'qtd',
-        'valor_unitario',
         'data',
         'solicitante',
         'endereco',

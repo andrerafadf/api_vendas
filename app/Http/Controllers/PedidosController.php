@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Pedido;
+use App\PedidoProduto;
 use Illuminate\Http\Request;
 use Monolog\Handler\TestHandler;
 
@@ -28,11 +29,27 @@ class PedidosController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store()
     {
-        $pedido = new Pedido($request->all());
+        $post = \Request::all();
+        $pedido = new Pedido();
+        $pedido->data = date('Y-m-d');
+        $pedido->solicitante = $post['solicitante'];
+        $pedido->endereco = $post['endereco'];
+        $pedido->despachante = $post['despachante'];
+        $pedido->situacao_id = $post['situacao_id'];
+
         try{
-            return \Response::json($pedido->save());
+            $pedido->save();
+            foreach ($post['produtos'] as $produto){
+                $pedidoProduto = new PedidoProduto();
+                $pedidoProduto->produto_id = $produto['id'];
+                $pedidoProduto->pedido_id = $pedido->id;
+                $pedidoProduto->qtd = $produto['qtd'];
+                $pedidoProduto->valor = $produto['valor'];
+                $pedidoProduto->save();
+            }
+            return true;
         }catch (\Exception $e){
             throw new \Exception($e->getMessage());
         }
@@ -62,20 +79,26 @@ class PedidosController extends Controller
      */
     public function update($id)
     {
-        $request = \Request::all();
-
-        $pedido = Pedido::find($id);
-
-        $pedido->produto_id     = $request['produto_id'];
-        $pedido->qtd            = $request['qtd'];
-        $pedido->valor_unitario = $request['valor_unitario'];
-        $pedido->data           = $request['data'];
-        $pedido->solicitante    = $request['solicitante'];
-        $pedido->endereco       = $request['endereco'];
-        $pedido->despachante    = $request['despachante'];
-        $pedido->situacao_id    = $request['situacao_id'];
+        $post = \Request::all();
 
         try{
+            $pedido = Pedido::find($id);
+
+            $pedido->solicitante    = $post['solicitante'];
+            $pedido->endereco       = $post['endereco'];
+            $pedido->despachante    = $post['despachante'];
+            $pedido->situacao_id    = $post['situacao_id'];
+
+            PedidoProduto::where('pedido_id', $pedido->id)->delete();
+            foreach ($post['produtos'] as $produto){
+                $pedidoProduto = new PedidoProduto();
+                $pedidoProduto->produto_id = $produto['id'];
+                $pedidoProduto->pedido_id = $pedido->id;
+                $pedidoProduto->qtd = $produto['qtd'];
+                $pedidoProduto->valor = $produto['valor'];
+                $pedidoProduto->save();
+            }
+
             return \Response::json($pedido->save());
         }catch (\Exception $e){
             throw new \Exception($e->getMessage());

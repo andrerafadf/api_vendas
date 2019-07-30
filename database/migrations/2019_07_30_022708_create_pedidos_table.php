@@ -15,15 +15,10 @@ class CreatePedidosTable extends Migration
     {
         Schema::create('pedidos', function (Blueprint $table) {
             $table->increments('id');
-            $table->decimal('qtd', 8,2);
-            $table->decimal('valor_unitario', 8,2);
             $table->date('data');
             $table->string('solicitante');
             $table->string('endereco')->nullable();
             $table->string('despachante')->nullable();
-
-            $table->integer('produto_id')->unsigned();
-            $table->foreign('produto_id')->references('id')->on('produtos');
             $table->timestamps();
         });
     }
